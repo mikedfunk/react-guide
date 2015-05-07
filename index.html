@@ -33,14 +33,33 @@
           );
         },
         handleCommentSubmit: function (comment) {
-          // TODO submit to the server and refresh the list
+          // before we send it via ajax just update the DOM
+          var comments = this.state.data;
+          var newComments = comments.concat([comment]);
+          this.setState({data: newComments});
+
+          // send the new comment via jquery AJAX to the server and update the state
+          // to trigger a change in the virtual DOM
+          $.post(
+            this.props.url,
+            // the data
+            comment,
+            // success function
+            function (data) {
+              // if the ajax route actuall worked this would update the DOM
+              // with the complete json
+              // this.setState({data: data});
+            }.bind(this),
+            // data type
+            'json'
+          );
         },
         // magic property to execute a function when the CommentBox renders
         componentDidMount: function () {
           // initial ajax load
           this.loadCommentsFromServer();
           // poll regularly and load comments from server
-          setInterval(this.loadCommentsFromServer, this.props.pollInterval);
+          // setInterval(this.loadCommentsFromServer, this.props.pollInterval);
         },
         render: function () {
           return (
@@ -52,6 +71,7 @@
           );
         }
       });
+
 
       /**
        * the child of a comment box that shows each individual comment
@@ -75,7 +95,7 @@
         }
       });
 
-      // TODO make this work to create a comment
+
       /**
        * form to add a comment
        */
@@ -110,6 +130,7 @@
           )
         }
       });
+
 
       /**
        * used in CommentList to display an individual comment
