@@ -3,7 +3,7 @@
     <title>Hello React</title>
     <script src="bower_components/react/react.js"></script>
     <script src="bower_components/react/JSXTransformer.js"></script>
-    <script src="http://code.jquery.com/jquery-1.10.0.min.js"></script>
+    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
     <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.2/marked.min.js"></script>-->
   </head>
   <body>
@@ -11,23 +11,33 @@
     <script type="text/jsx">
 
       /**
-       * some dummy data
-       */
-      var data = [
-        {"author": "Joe Schmo", "text": "a first comment"},
-        {"author": "Sue Smith", "text": "a second comment"}
-      ];
-
-      /**
-       * the wrapper for everything. includes a nested commentList with 
+      * the wrapper for everything. includes a nested commentList with
        * supplied data and a commentForm class.
        */
       var CommentBox = React.createClass({
+        getInitialState: function () {
+          return {data: []};
+        },
+        // magic property to execute a function when the CommentBox renders
+        componentDidMount: function () {
+          // when it mounts, get the comments over AJAX via jQuery
+          $.getJSON(
+            // use the passed URL from React.render()
+            this.props.url,
+            function (data) {
+              // use the React-supplied setState function to update the data
+              // property
+              this.setState({data: data});
+            // will not work without this! Tells it to pass the scope of this
+            // to the child
+            }.bind(this)
+          );
+        },
         render: function () {
           return (
             <div className="commentBox">
               <h1>Comments</h1>
-              <CommentList data={this.props.data} />
+              <CommentList data={this.state.data} />
               <CommentForm />
             </div>
           );
@@ -84,10 +94,11 @@
       });
 
       /**
-       * now render the comment box, which gets all it's children
+       * now render the comment box, which gets all it's children. It gets
+       * the data it needs via the url attr from the json file
        */
       React.render(
-        <CommentBox data={data} />,
+        <CommentBox url="comments.json" />,
         document.getElementById('content')
       );
     </script>
