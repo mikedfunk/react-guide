@@ -46,8 +46,7 @@
             comment,
             // success function
             function (data) {
-              // if the ajax route actuall worked this would update the DOM
-              // with the complete json
+              // assuming the post returns the full json, this will set the state
               // this.setState({data: data});
             }.bind(this),
             // data type
@@ -59,7 +58,7 @@
           // initial ajax load
           this.loadCommentsFromServer();
           // poll regularly and load comments from server
-          // setInterval(this.loadCommentsFromServer, this.props.pollInterval);
+          setInterval(this.loadCommentsFromServer, this.props.pollInterval);
         },
         render: function () {
           return (
@@ -78,8 +77,13 @@
        */
       var CommentList = React.createClass({
         render: function () {
+          // convert data to an array
+          var dataArr = [];
+          $.each(this.props.data, function (key, value) {
+            dataArr.push(value);
+          });
           // transform props.data to some jsx in a <Comment> class
-          var commentNodes = this.props.data.map(function (comment) {
+          var commentNodes = dataArr.map(function (comment) {
             return (
               <Comment author={comment.author}>
                 {comment.text}
@@ -153,7 +157,7 @@
        * the data it needs via the url attr from the json file
        */
       React.render(
-        <CommentBox url="comments.json" pollInterval={2000} />,
+        <CommentBox url="http://localhost:3000/comments" pollInterval={2000} />,
         document.getElementById('content')
       );
     </script>
