@@ -9,10 +9,19 @@
   <body>
     <div id="content"></div>
     <script type="text/jsx">
+
+      /**
+       * some dummy data
+       */
       var data = [
         {"author": "Joe Schmo", "text": "a first comment"},
         {"author": "Sue Smith", "text": "a second comment"}
       ];
+
+      /**
+       * the wrapper for everything. includes a nested commentList with 
+       * supplied data and a commentForm class.
+       */
       var CommentBox = React.createClass({
         render: function () {
           return (
@@ -24,8 +33,13 @@
           );
         }
       });
+
+      /**
+       * the child of a comment box that shows each individual comment
+       */
       var CommentList = React.createClass({
         render: function () {
+          // transform props.data to some jsx in a <Comment> class
           var commentNodes = this.props.data.map(function (comment) {
             return (
               <Comment author={comment.author}>
@@ -34,12 +48,15 @@
             );
           });
           return (
+            // now wrap the nodes in a div and return it for this class
             <div className="commentList">
               {commentNodes}
             </div>
           );
         }
       });
+
+      // TODO make this work to create a comment
       var CommentForm = React.createClass({
         render: function () {
           return (
@@ -49,6 +66,10 @@
           )
         }
       });
+
+      /**
+       * used in CommentList to display an individual comment
+       */
       var Comment = React.createClass({
         render: function () {
           return (
@@ -61,6 +82,10 @@
           )
         }
       });
+
+      /**
+       * now render the comment box, which gets all it's children
+       */
       React.render(
         <CommentBox data={data} />,
         document.getElementById('content')
