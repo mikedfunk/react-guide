@@ -32,6 +32,9 @@
             }.bind(this)
           );
         },
+        handleCommentSubmit: function (comment) {
+          // TODO submit to the server and refresh the list
+        },
         // magic property to execute a function when the CommentBox renders
         componentDidMount: function () {
           // initial ajax load
@@ -44,7 +47,7 @@
             <div className="commentBox">
               <h1>Comments</h1>
               <CommentList data={this.state.data} />
-              <CommentForm />
+              <CommentForm onCommentSubmit={this.handleCommentSubmit} />
             </div>
           );
         }
@@ -73,9 +76,13 @@
       });
 
       // TODO make this work to create a comment
+      /**
+       * form to add a comment
+       */
       var CommentForm = React.createClass({
         handleSubmit: function (e) {
           e.preventDefault();
+          // get the value of the dom node which has ref="author"
           var author = React.findDOMNode(this.refs.author).value.trim();
           var text = React.findDOMNode(this.refs.text).value.trim();
           if (!text || !author) {
@@ -83,7 +90,8 @@
             alert('missing text or author');
             return;
           }
-          // TODO: send validated new data to the server
+          // call the callback passed in from the CommentBox class
+          this.props.onCommentSubmit({author: author, text: text});
           // find the dom element with ref="author"
           React.findDOMNode(this.refs.author).value = '';
           React.findDOMNode(this.refs.text).value = '';
